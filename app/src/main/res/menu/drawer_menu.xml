@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
 
     <item
         android:id="@+id/contact"
@@ -10,12 +12,30 @@
         android:icon="@drawable/favorite"
         android:title="Favorite" />
     <item
-        android:id="@+id/category"
-        android:icon="@drawable/category"
-        android:title="Category" />
-    <item
         android:id="@+id/settings"
         android:icon="@drawable/settings"
         android:title="Settings" />
+    <item
+        android:title="Groups">
+
+        <menu>
+
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/family"
+                    android:icon="@drawable/group"
+                    android:title="Family" />
+
+                <item
+                    android:id="@+id/friend"
+                    android:icon="@drawable/group"
+                    android:title="Friends" />
+
+            </group>
+
+        </menu>
+
+    </item>
 
 </menu>
