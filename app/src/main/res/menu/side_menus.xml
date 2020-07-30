@@ -26,14 +26,12 @@
         app:showAsAction="never">
 
         <menu>
-
             <item
                 android:id="@+id/sortN"
                 android:title="First Name" />
             <item
                 android:id="@+id/sortL"
                 android:title="Last Name"/>
-
         </menu>
 
     </item>

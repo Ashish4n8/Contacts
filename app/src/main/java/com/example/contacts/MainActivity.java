@@ -11,13 +11,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
     DrawerLayout drawer;
-    ActionBarDrawerToggle toggle;
+    //ActionBarDrawerToggle toggle;
     NavigationView nav;
 
     @Override
@@ -25,14 +27,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+        FloatingActionButton fab = findViewById(R.id.fab);
 
         drawer = findViewById(R.id.drawable_layout);
         nav = findViewById(R.id.nav);
-        toggle = new ActionBarDrawerToggle(this, drawer,toolbar,R.string.open, R.string.close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        //toggle = new ActionBarDrawerToggle(this, drawer,toolbar,R.string.open, R.string.close);
+        //drawer.addDrawerListener(toggle);
+        //toggle.syncState();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,new Home()).commit();
         nav.setCheckedItem(R.id.contact);
@@ -44,52 +47,35 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout,new Home()).commit();
                         break;
                     case R.id.fav:
-
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new Favorite()).commit();
                         break;
                     case R.id.settings:
 
                         break;
                     case R.id.family:
-
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new Group(0)).commit();
                         break;
                     case R.id.friend:
-
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new Group(1)).commit();
                         break;
                 }
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
         });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Wohooo!!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.side_menus,menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.search :
-                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.ie:
-                Toast.makeText(this, "Import/Export", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.settings:
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.sortN:
-                Toast.makeText(this, "Sort by first name", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.sortL:
-                Toast.makeText(this, "Sort by last name", Toast.LENGTH_SHORT).show();
-                break;
-        }
+
         return super.onOptionsItemSelected(item);
     }
 }

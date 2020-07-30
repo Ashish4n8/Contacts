@@ -14,17 +14,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import static com.example.contacts.R.id.toolbar;
-
-public class Home extends Fragment {
+public class Favorite extends Fragment {
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home,container,false);
-
+        View view = inflater.inflate(R.layout.favorite, container, false);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.side_menus);
         drawer = ((MainActivity)getActivity()).findViewById(R.id.drawable_layout);

@@ -14,23 +14,31 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import static com.example.contacts.R.id.toolbar;
-
-public class Home extends Fragment {
+public class Group extends Fragment {
+    private int cat;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
+
+    public Group(int category) {
+        this.cat = category;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home,container,false);
-
+        View view = inflater.inflate(R.layout.groups,container,false);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.side_menus);
         drawer = ((MainActivity)getActivity()).findViewById(R.id.drawable_layout);
-        toggle = new ActionBarDrawerToggle((MainActivity)getActivity(), drawer,toolbar,R.string.open,R.string.close);
+        toggle = new ActionBarDrawerToggle(getActivity(), drawer,toolbar,R.string.open,R.string.close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        if (cat==0){
+            toolbar.setTitle("Family");
+        }
+        else {
+            toolbar.setTitle("Friends");
+        }
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
