@@ -3,7 +3,7 @@ package com.example.contacts;
 public class Contact {
     private int id;
     private String Fname, Lname, num1, num2,email, category;
-    private boolean favorite;
+    private boolean favorite = false;
 
     public Contact(int id, String fname, String lname, String num1, String num2, String email, String category, boolean favorite) {
         this.id = id;

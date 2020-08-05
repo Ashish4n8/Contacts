@@ -3,6 +3,8 @@ package com.example.contacts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +35,7 @@ public class ContactAdd extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.tool);
         toolbar.inflateMenu(R.menu.new_contact);
 
-        String options[] = getResources().getStringArray(R.array.options);
+        String[] options = getResources().getStringArray(R.array.options);
         ArrayAdapter ada = new ArrayAdapter(this, android.R.layout.simple_spinner_item,options);
         ada.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cat.setAdapter(ada);
@@ -46,7 +48,20 @@ public class ContactAdd extends AppCompatActivity {
                         Toast.makeText(ContactAdd.this, "Enter required fields", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        Toast.makeText(ContactAdd.this, "Saved", Toast.LENGTH_SHORT).show();
+                        Contact contact;
+                        contact = new Contact(-1,fName.getText().toString().trim(),lName.getText().toString().trim(),num1.getText().toString().trim(),
+                                num2.getText().toString().trim(),email.getText().toString().trim(),option,false);
+                        DatabaseHelper databaseHelper = new DatabaseHelper(ContactAdd.this);
+                        boolean d = databaseHelper.addContact(contact);
+                        if (d){
+                            Toast.makeText(ContactAdd.this, "Added Successfully", Toast.LENGTH_SHORT).show();
+                            Intent intent =new Intent(ContactAdd.this,MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(ContactAdd.this, "Failed to add", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
                 return false;
@@ -57,7 +72,7 @@ public class ContactAdd extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 option = adapterView.getItemAtPosition(i).toString();
-                Toast.makeText(ContactAdd.this, option, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ContactAdd.this, option+" is Selected", Toast.LENGTH_SHORT).show();
             }
 
             @Override

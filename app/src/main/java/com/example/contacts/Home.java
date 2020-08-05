@@ -13,17 +13,26 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 import static com.example.contacts.R.id.toolbar;
 
 public class Home extends Fragment {
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
+    View view;
+    RecyclerView recyclerView;
+    RecyclerView.Adapter myAdapter;
+    RecyclerView.LayoutManager layoutManager;
+    ArrayList<Contact> contacts;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home,container,false);
+        view = inflater.inflate(R.layout.home,container,false);
 
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.side_menus);
@@ -56,6 +65,20 @@ public class Home extends Fragment {
             }
         });
 
+        DatabaseHelper dbh = new DatabaseHelper(this.getActivity());
+        contacts = dbh.getContacts();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        recyclerView = view.findViewById(R.id.list);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this.getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        myAdapter = new ContactAdapter(this.getActivity(),contacts);
+        recyclerView.setAdapter(myAdapter);
     }
 }
