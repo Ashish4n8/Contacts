@@ -1,5 +1,6 @@
 package com.example.contacts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 
 import static com.example.contacts.R.id.toolbar;
 
-public class Home extends Fragment {
+public class Home extends Fragment implements ContactAdapter.ContactClicked {
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
     View view;
@@ -80,5 +81,13 @@ public class Home extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         myAdapter = new ContactAdapter(this.getActivity(),contacts);
         recyclerView.setAdapter(myAdapter);
+    }
+
+    @Override
+    public void onClicked(int index) {
+        Intent intent = new Intent(this.getActivity(),DetailContact.class);
+        Contact con = contacts.get(index);
+        intent.putExtra("contact",con);
+        startActivity(intent);
     }
 }

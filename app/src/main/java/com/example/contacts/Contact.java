@@ -1,6 +1,8 @@
 package com.example.contacts;
 
-public class Contact {
+import java.io.Serializable;
+
+public class Contact implements Serializable {
     private int id;
     private String Fname, Lname, num1, num2,email, category;
     private boolean favorite = false;

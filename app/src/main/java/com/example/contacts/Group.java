@@ -13,11 +13,22 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class Group extends Fragment {
+import java.util.ArrayList;
+
+public class Group extends Fragment implements ContactAdapter.ContactClicked {
     private int cat;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
+    View view;
+    RecyclerView recyclerView;
+    RecyclerView.Adapter myAdapter;
+    RecyclerView.LayoutManager layoutManager;
+    ArrayList<Contact> contacts;
+    ArrayList<Contact> friends;
+    ArrayList<Contact> family;
 
     public Group(int category) {
         this.cat = category;
@@ -26,7 +37,7 @@ public class Group extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.groups,container,false);
+        view = inflater.inflate(R.layout.groups,container,false);
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.side_menus);
         drawer = ((MainActivity)getActivity()).findViewById(R.id.drawable_layout);
@@ -64,6 +75,40 @@ public class Group extends Fragment {
             }
         });
 
+        DatabaseHelper db = new DatabaseHelper(this.getActivity());
+        contacts = db.getContacts();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        recyclerView = view.findViewById(R.id.list);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this.getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        friends = new ArrayList<Contact>();
+        family = new ArrayList<Contact>();
+        for (int i=0;i<contacts.size();i++){
+            Contact test = contacts.get(i);
+            if (test.getCategory() == "Friends"){
+                friends.add(test);
+            }
+            else {
+                family.add(test);
+            }
+        }
+        if (cat == 0){
+            myAdapter = new ContactAdapter(this.getActivity(),family);
+        }
+        else {
+            myAdapter = new ContactAdapter(this.getActivity(), friends);
+        }
+        recyclerView.setAdapter(myAdapter);
+    }
+
+    @Override
+    public void onClicked(int index) {
+
     }
 }
