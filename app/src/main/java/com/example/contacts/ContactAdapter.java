@@ -38,7 +38,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                     contactClicked.onClicked(contacts.indexOf((Contact)view.getTag()));
                 }
             });
-
         }
     }
 

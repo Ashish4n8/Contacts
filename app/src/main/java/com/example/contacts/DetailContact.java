@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class DetailContact extends AppCompatActivity {
-    ImageView img;
+    ImageView img, fav;
     TextView name, numb1, numb2,msg1,msg2,mail, cate;
     LinearLayout call, msg, lMail,call1,msgL;
 
@@ -35,7 +35,7 @@ public class DetailContact extends AppCompatActivity {
         lMail = findViewById(R.id.lMail);
         call1 = findViewById(R.id.call1);
         msgL = findViewById(R.id.msgL);
-
+        fav = findViewById(R.id.fav);
 
         final Contact contact = (Contact)getIntent().getSerializableExtra("contact");
         name.setText(contact.getFname()+" "+contact.getLname());
@@ -61,38 +61,63 @@ public class DetailContact extends AppCompatActivity {
         }
         cate.setText(contact.getCategory());
 
+        final boolean fa = contact.isFavorite();
+        if (fa == true){
+            fav.setImageResource(R.drawable.favorite_red);
+        }
+        else {
+            fav.setImageResource(R.drawable.favorite);
+        }
+
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (contact.isFavorite() == true){
+                    fav.setImageResource(R.drawable.favorite);
+                    contact.setFavorite(false);
+                }
+                else {
+                    fav.setImageResource(R.drawable.favorite_red);
+                    contact.setFavorite(false);
+                }
+            }
+        });
+
+        final String n1 = contact.getNum1();
+        final String n2 = contact.getNum2();
+        final String em = contact.getEmail();
         call1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent calln1 = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+contact.getNum1()));
+                Intent calln1 = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+n1));
                 startActivity(calln1);
             }
         });
         call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent calln2 = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+contact.getNum2()));
+                Intent calln2 = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+n2));
                 startActivity(calln2);
             }
         });
         msgL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent ms = new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"+contact.getNum1()));
+                Intent ms = new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"+n1));
                 startActivity(ms);
             }
         });
         msg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent ms = new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"+contact.getNum2()));
+                Intent ms = new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"+n2));
                 startActivity(ms);
             }
         });
         lMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mai = new Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:"+contact.getEmail()));
+                Intent mai = new Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:"+em));
                 startActivity(mai);
             }
         });
