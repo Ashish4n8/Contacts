@@ -13,27 +13,29 @@ import java.util.ArrayList;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
     private ArrayList<Contact> contacts;
+    private ContactClicked mcontactClicked;
 
     public interface ContactClicked{
         void onClicked(int index);
     }
 
-    ContactClicked activity;
-    public ContactAdapter(Context context, ArrayList<Contact> list){
+
+    public ContactAdapter(ArrayList<Contact> list, ContactClicked contactClicked){
         contacts = list;
-        activity = (ContactClicked) context;
+        this.mcontactClicked = contactClicked;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv;
-        public ViewHolder(@NonNull View itemView) {
+        ContactClicked contactClicked;
+        public ViewHolder(@NonNull View itemView, final ContactClicked contactClicked) {
             super(itemView);
             tv =itemView.findViewById(R.id.tvN);
-
+            this.contactClicked = contactClicked;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    activity.onClicked(contacts.indexOf((Contact)view.getTag()));
+                    contactClicked.onClicked(contacts.indexOf((Contact)view.getTag()));
                 }
             });
 
@@ -46,7 +48,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_layout,parent,false);
 
-        return new ViewHolder(v);
+        return new ViewHolder(v,mcontactClicked);
     }
 
     @Override

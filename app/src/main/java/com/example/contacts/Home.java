@@ -1,5 +1,6 @@
 package com.example.contacts;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,11 +31,11 @@ public class Home extends Fragment implements ContactAdapter.ContactClicked {
     RecyclerView.LayoutManager layoutManager;
     ArrayList<Contact> contacts;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.home,container,false);
-
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.side_menus);
         drawer = ((MainActivity)getActivity()).findViewById(R.id.drawable_layout);
@@ -79,7 +80,8 @@ public class Home extends Fragment implements ContactAdapter.ContactClicked {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        myAdapter = new ContactAdapter(this.getActivity(),contacts);
+        myAdapter = new ContactAdapter(contacts,this);
+
         recyclerView.setAdapter(myAdapter);
     }
 

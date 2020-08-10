@@ -1,6 +1,7 @@
 package com.example.contacts;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,18 +92,20 @@ public class Group extends Fragment implements ContactAdapter.ContactClicked {
         family = new ArrayList<Contact>();
         for (int i=0;i<contacts.size();i++){
             Contact test = contacts.get(i);
-            if (test.getCategory() == "Friends"){
-                friends.add(test);
+            if (test.getCategory().equals("Family")){
+                family.add(test);
+
             }
             else {
-                family.add(test);
+                friends.add(test);
             }
         }
+
         if (cat == 0){
-            myAdapter = new ContactAdapter(this.getActivity(),family);
+            myAdapter = new ContactAdapter(family,this);
         }
         else {
-            myAdapter = new ContactAdapter(this.getActivity(), friends);
+            myAdapter = new ContactAdapter(friends, this);
         }
         recyclerView.setAdapter(myAdapter);
     }
