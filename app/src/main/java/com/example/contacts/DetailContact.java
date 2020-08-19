@@ -12,10 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class DetailContact extends AppCompatActivity {
     ImageView img, fav;
     TextView name, numb1, numb2,msg1,msg2,mail, cate;
     LinearLayout call, msg, lMail,call1,msgL;
+    Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +39,15 @@ public class DetailContact extends AppCompatActivity {
         call1 = findViewById(R.id.call1);
         msgL = findViewById(R.id.msgL);
         fav = findViewById(R.id.fav);
+        img = findViewById(R.id.dima);
 
-        final Contact contact = (Contact)getIntent().getSerializableExtra("contact");
+        int x = getIntent().getIntExtra("contact",0);
+        DatabaseHelper db = new DatabaseHelper(DetailContact.this);
+        ArrayList<Contact> contacts = db.getContacts();
+        contact = contacts.get(x-1);
         name.setText(contact.getFname()+" "+contact.getLname());
         numb1.setText(contact.getNum1());
+        img.setImageBitmap(contact.getImage());
         if (contact.getNum2().isEmpty()){
             call.setVisibility(View.GONE);
         }
@@ -78,7 +86,7 @@ public class DetailContact extends AppCompatActivity {
                 }
                 else {
                     fav.setImageResource(R.drawable.favorite_red);
-                    contact.setFavorite(false);
+                    contact.setFavorite(true);
                 }
             }
         });
@@ -121,5 +129,19 @@ public class DetailContact extends AppCompatActivity {
                 startActivity(mai);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        DatabaseHelper databaseHelper = new DatabaseHelper(DetailContact.this);
+        boolean b = databaseHelper.updateContact(contact);
+        if (b){
+            Toast.makeText(this, "Favorite was set", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Favorite was not able to set", Toast.LENGTH_SHORT).show();
+        }
+        finish();
     }
 }

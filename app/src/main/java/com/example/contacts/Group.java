@@ -1,5 +1,6 @@
 package com.example.contacts;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -112,6 +113,10 @@ public class Group extends Fragment implements ContactAdapter.ContactClicked {
 
     @Override
     public void onClicked(int index) {
-
+        Intent intent = new Intent(this.getActivity(),DetailContact.class);
+        Contact con = contacts.get(index);
+        int conId = con.getId();
+        intent.putExtra("contact",conId);
+        startActivity(intent);
     }
 }

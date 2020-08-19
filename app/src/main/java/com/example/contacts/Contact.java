@@ -1,13 +1,15 @@
 package com.example.contacts;
 
-import java.io.Serializable;
+import android.graphics.Bitmap;
 
-public class Contact implements Serializable {
+
+public class Contact {
     private int id;
     private String Fname, Lname, num1, num2,email, category;
     private boolean favorite = false;
+    private Bitmap image;
 
-    public Contact(int id, String fname, String lname, String num1, String num2, String email, String category, boolean favorite) {
+    public Contact(int id, String fname, String lname, String num1, String num2, String email, String category, boolean favorite, Bitmap image) {
         this.id = id;
         Fname = fname;
         Lname = lname;
@@ -16,7 +18,9 @@ public class Contact implements Serializable {
         this.email = email;
         this.category = category;
         this.favorite = favorite;
+        this.image = image;
     }
+
 
     public int getId() {
         return id;
@@ -62,6 +66,14 @@ public class Contact implements Serializable {
         return email;
     }
 
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -81,4 +93,5 @@ public class Contact implements Serializable {
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
+
 }

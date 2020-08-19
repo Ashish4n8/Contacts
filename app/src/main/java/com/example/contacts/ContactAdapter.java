@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,15 +28,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tv;
-        ContactClicked contactClicked;
+        ImageView img;
+        ContactClicked ncontactClicked;
         public ViewHolder(@NonNull View itemView, final ContactClicked contactClicked) {
             super(itemView);
             tv =itemView.findViewById(R.id.tvN);
-            this.contactClicked = contactClicked;
+            img = itemView.findViewById(R.id.imaA);
+            this.ncontactClicked = contactClicked;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    contactClicked.onClicked(contacts.indexOf((Contact)view.getTag()));
+                    ncontactClicked.onClicked(contacts.indexOf((Contact)view.getTag()));
                 }
             });
         }
@@ -54,6 +57,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     public void onBindViewHolder(@NonNull ContactAdapter.ViewHolder holder, int position) {
         holder.itemView.setTag(contacts.get(position));
         holder.tv.setText(contacts.get(position).getFname());
+        holder.img.setImageBitmap(contacts.get(position).getImage());
     }
 
     @Override

@@ -1,11 +1,18 @@
 package com.example.contacts;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,11 +22,14 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 public class ContactAdd extends AppCompatActivity {
     Spinner cat;
     ImageView img;
     EditText fName,lName,num1,num2,email;
     String option;
+    Bitmap btmp = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +45,13 @@ public class ContactAdd extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.tool);
         toolbar.inflateMenu(R.menu.new_contact);
 
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i,3);
+            }
+        });
         String[] options = getResources().getStringArray(R.array.options);
         ArrayAdapter ada = new ArrayAdapter(this, android.R.layout.simple_spinner_item,options);
         ada.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -50,7 +67,7 @@ public class ContactAdd extends AppCompatActivity {
                     else {
                         Contact contact;
                         contact = new Contact(-1,fName.getText().toString().trim(),lName.getText().toString().trim(),num1.getText().toString().trim(),
-                                num2.getText().toString().trim(),email.getText().toString().trim(),option,false);
+                                num2.getText().toString().trim(),email.getText().toString().trim(),option,false,btmp);
                         DatabaseHelper databaseHelper = new DatabaseHelper(ContactAdd.this);
                         boolean d = databaseHelper.addContact(contact);
                         if (d){
@@ -80,5 +97,21 @@ public class ContactAdd extends AppCompatActivity {
 
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 3 && resultCode == RESULT_OK && data!=null){
+            Uri Simage = data.getData();
+            try {
+                //Bitmap btmp = MediaStore.Images.Media.getBitmap(getContentResolver(),Simage);  OR
+                btmp = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(),Simage));
+                img.setImageBitmap(btmp);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 }

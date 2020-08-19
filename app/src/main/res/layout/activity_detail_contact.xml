@@ -17,10 +17,9 @@
         app:title="Contact" />
 
     <ImageView
-        android:id="@+id/img"
+        android:id="@+id/dima"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:clickable="true"
+        android:layout_height="182dp"
         app:srcCompat="@drawable/person" />
 
     <LinearLayout
@@ -43,8 +42,7 @@
             android:layout_height="30dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:clickable="true"
-            app:srcCompat="@drawable/favorite" />
+            android:clickable="true" />
     </LinearLayout>
 
     <LinearLayout

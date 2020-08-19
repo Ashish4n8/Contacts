@@ -89,7 +89,8 @@ public class Home extends Fragment implements ContactAdapter.ContactClicked {
     public void onClicked(int index) {
         Intent intent = new Intent(this.getActivity(),DetailContact.class);
         Contact con = contacts.get(index);
-        intent.putExtra("contact",con);
+        int conId = con.getId();
+        intent.putExtra("contact",conId);
         startActivity(intent);
     }
 }
