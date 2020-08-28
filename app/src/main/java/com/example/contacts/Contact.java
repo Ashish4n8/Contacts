@@ -1,18 +1,43 @@
 package com.example.contacts;
 
-import android.graphics.Bitmap;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 
-public class Contact {
+@Entity(tableName = "contact_table")
+public class Contact{
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
-    private String Fname, Lname, num1, num2,email, category;
-    private boolean favorite = false;
-    private Bitmap image;
 
-    public Contact(int id, String fname, String lname, String num1, String num2, String email, String category, boolean favorite, Bitmap image) {
-        this.id = id;
-        Fname = fname;
-        Lname = lname;
+    @ColumnInfo(name = "First_name")
+    private String fname;
+
+    @ColumnInfo(name = "Last_name")
+    private String lname;
+
+    @ColumnInfo(name = "Num_1")
+    private String num1;
+
+    @ColumnInfo(name = "Num_2")
+    private String num2;
+
+    @ColumnInfo(name = "E_mail")
+    private String email;
+
+    @ColumnInfo(name = "Category")
+    private String category;
+
+    @ColumnInfo(name = "Favorite")
+    private boolean favorite = false;
+
+    @ColumnInfo(name = "Photo")
+    private String image;
+
+    public Contact(String fname, String lname, String num1, String num2, String email, String category, boolean favorite, String image) {
+        this.fname = fname;
+        this.lname = lname;
         this.num1 = num1;
         this.num2 = num2;
         this.email = email;
@@ -31,19 +56,19 @@ public class Contact {
     }
 
     public String getFname() {
-        return Fname;
+        return fname;
     }
 
     public void setFname(String fname) {
-        Fname = fname;
+        this.fname = fname;
     }
 
     public String getLname() {
-        return Lname;
+        return lname;
     }
 
     public void setLname(String lname) {
-        Lname = lname;
+        this.lname = lname;
     }
 
     public String getNum1() {
@@ -66,11 +91,11 @@ public class Contact {
         return email;
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

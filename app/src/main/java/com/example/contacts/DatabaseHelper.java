@@ -10,11 +10,15 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    MutableLiveData<ArrayList<Contact>> contacts;
+    ArrayList<Contact> list;
 
     public DatabaseHelper(@Nullable Context context) {
         super(context,"ashish.db", null, 1);
@@ -34,10 +38,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean addContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Bitmap ima = contact.getImage();
+        String ima = contact.getImage();
         ByteArrayOutputStream str = new ByteArrayOutputStream();
-        ima.compress(Bitmap.CompressFormat.JPEG, 100, str);
-        byte[] image = str.toByteArray();
+//        ima.compress(Bitmap.CompressFormat.JPEG, 100, str);
+//        byte[] image = str.toByteArray();
         ContentValues cv = new ContentValues();
         cv.put("FNAME", contact.getFname());
         cv.put("LNAME", contact.getLname());
@@ -46,22 +50,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("EMAIL", contact.getEmail());
         cv.put("CATEGORY", contact.getCategory());
         cv.put("FAVORITE", false);
-        cv.put("IMAGE",image);
+        cv.put("IMAGE",ima);
         long insert = db.insert("CONTACT", null, cv);
         if (insert == -1) {
             return false;
         }
         else {
+            list.add(new Contact(contact.getFname(),contact.getLname(),contact.getNum1(),contact.getNum2(),contact.getEmail(),contact.getCategory(),contact.isFavorite(),contact.getImage()));
             return true;
         }
     }
 
     public boolean updateContact(Contact contact){
         SQLiteDatabase database = this.getWritableDatabase();
-        Bitmap ima = contact.getImage();
-        ByteArrayOutputStream str = new ByteArrayOutputStream();
-        ima.compress(Bitmap.CompressFormat.JPEG, 100, str);
-        byte[] image = str.toByteArray();
+        String ima = contact.getImage();
+//        ByteArrayOutputStream str = new ByteArrayOutputStream();
+//        ima.compress(Bitmap.CompressFormat.JPEG, 100, str);
+//        byte[] image = str.toByteArray();
         ContentValues cv = new ContentValues();
         cv.put("FNAME",contact.getFname());
         cv.put("LNAME", contact.getLname());
@@ -70,18 +75,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("EMAIL", contact.getEmail());
         cv.put("CATEGORY", contact.getCategory());
         cv.put("FAVORITE", contact.isFavorite());
-        cv.put("IMAGE",image);
+        cv.put("IMAGE",ima);
         long up = database.update("CONTACT",cv,"ID="+contact.getId(),null);
         if (up == -1){
             return false;
         }
         else {
+            //list = getContacts();
             return true;
         }
     }
 
-    public ArrayList<Contact> getContacts(){
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
+    public MutableLiveData<ArrayList<Contact>> getContacts(){
+
+        contacts = new MutableLiveData<ArrayList<Contact>>();
+        list = new ArrayList<Contact>();
         String query = "SELECT * FROM CONTACT";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query,null);
@@ -96,20 +104,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String email = cursor.getString(5);
                 String cat = cursor.getString(6);
                 int f = cursor.getInt(7);
-                byte[] im = cursor.getBlob(8);
-                Bitmap ima = BitmapFactory.decodeByteArray(im,0,im.length);
+                String ima = cursor.getString(8);
+//                String ima = BitmapFactory.decodeByteArray(im,0,im.length);
                 boolean fav;
                 if (f == 0){
                     fav = false;
                 }
                 else fav=true;
-                Contact cont = new Contact(id,fname,lname,num1,num2,email,cat,fav,ima);
-                contacts.add(cont);
+                Contact cont = new Contact(fname,lname,num1,num2,email,cat,fav,ima);
+                list.add(cont);
+
                 Log.d("ID start","ID Start");
                 Log.d("ID =", String.valueOf(id));
             }while (cursor.moveToNext());
         }
         cursor.close();
+        contacts.postValue(list);
         db.close();
         return contacts;
     }

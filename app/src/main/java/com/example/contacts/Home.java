@@ -15,10 +15,15 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.contacts.R.id.toolbar;
 
@@ -29,8 +34,8 @@ public class Home extends Fragment implements ContactAdapter.ContactClicked {
     RecyclerView recyclerView;
     RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList<Contact> contacts;
-
+    ContactViewModel cvm;
+    List<Contact> cons;
 
     @Nullable
     @Override
@@ -67,28 +72,31 @@ public class Home extends Fragment implements ContactAdapter.ContactClicked {
             }
         });
 
-        DatabaseHelper dbh = new DatabaseHelper(this.getActivity());
-        contacts = dbh.getContacts();
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
         recyclerView = view.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        myAdapter = new ContactAdapter(contacts,this);
+        final ContactAdapter myAdapter = new ContactAdapter(this);
 
         recyclerView.setAdapter(myAdapter);
+        cvm =new ViewModelProvider(getActivity()).get(ContactViewModel.class);
+        cvm.getall().observe(getViewLifecycleOwner(), new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(List<Contact> list) {
+                cons = list;
+                Toast.makeText(getActivity(), list.size(), Toast.LENGTH_SHORT).show();
+                myAdapter.setcons(cons);
+
+            }
+        });
+        return view;
     }
+
 
     @Override
     public void onClicked(int index) {
         Intent intent = new Intent(this.getActivity(),DetailContact.class);
-        Contact con = contacts.get(index);
+        Contact con = cons.get(index);
         int conId = con.getId();
         intent.putExtra("contact",conId);
         startActivity(intent);

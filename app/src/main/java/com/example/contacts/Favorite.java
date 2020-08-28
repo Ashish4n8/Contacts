@@ -14,20 +14,26 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Favorite extends Fragment implements ContactAdapter.ContactClicked {
     ActionBarDrawerToggle toggle;
     DrawerLayout drawer;
     View view;
     RecyclerView recyclerView;
-    RecyclerView.Adapter myAdapter;
+    //RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList<Contact> contacts;
-    ArrayList<Contact> fav;
+    List<Contact> contacts;
+    List<Contact> fav;
+    ContactViewModel cvm;
+    ContactAdapter myAdapter = new ContactAdapter(this);
 
     @Nullable
     @Override
@@ -64,8 +70,21 @@ public class Favorite extends Fragment implements ContactAdapter.ContactClicked 
             }
         });
 
-        DatabaseHelper db = new DatabaseHelper(this.getActivity());
-        contacts = db.getContacts();
+        fav = new ArrayList<Contact>();
+        cvm =new ViewModelProvider(this).get(ContactViewModel.class);
+        cvm.getall().observe(getViewLifecycleOwner(), new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(List<Contact> list) {
+                contacts = list;
+                for (int i=0;i<contacts.size();i++){
+                    Contact test = contacts.get(i);
+                    if (test.isFavorite()){
+                        fav.add(test);
+                    }
+                }
+                myAdapter.setcons(fav);
+            }
+        });
         return view;
     }
 
@@ -76,14 +95,6 @@ public class Favorite extends Fragment implements ContactAdapter.ContactClicked 
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        fav = new ArrayList<Contact>();
-        for (int i=0;i<contacts.size();i++){
-            Contact test = contacts.get(i);
-            if (test.isFavorite()){
-                fav.add(test);
-            }
-        }
-        myAdapter = new ContactAdapter(fav,this);
         recyclerView.setAdapter(myAdapter);
     }
 

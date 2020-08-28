@@ -2,10 +2,15 @@ package com.example.contacts;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,12 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DetailContact extends AppCompatActivity {
     ImageView img, fav;
     TextView name, numb1, numb2,msg1,msg2,mail, cate;
     LinearLayout call, msg, lMail,call1,msgL;
     Contact contact;
+    ContactViewModel cvm;
+    List<Contact> contacts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +50,30 @@ public class DetailContact extends AppCompatActivity {
         img = findViewById(R.id.dima);
 
         int x = getIntent().getIntExtra("contact",0);
-        DatabaseHelper db = new DatabaseHelper(DetailContact.this);
-        ArrayList<Contact> contacts = db.getContacts();
+        cvm = new ViewModelProvider(DetailContact.this).get(ContactViewModel.class);
+//        contacts = new ArrayList<Contact>();
+        cvm.getall().observe(this, new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(List<Contact> list) {
+                Log.d("ASHISHHHHH",String.valueOf(list.size()));
+                contacts =list;
+            }
+        });
+
+//        final DatabaseHelper db = new DatabaseHelper(DetailContact.this);
+//        contacts = db.getContacts();
         contact = contacts.get(x-1);
         name.setText(contact.getFname()+" "+contact.getLname());
         numb1.setText(contact.getNum1());
-        img.setImageBitmap(contact.getImage());
+        String im = contact.getImage();
+        if (im == null){
+            img.setImageResource(R.drawable.person);
+        }
+        else {
+            Uri uri = Uri.parse(im);
+            img.setImageURI(null);
+            img.setImageURI(uri);
+        }
         if (contact.getNum2().isEmpty()){
             call.setVisibility(View.GONE);
         }
@@ -83,14 +109,33 @@ public class DetailContact extends AppCompatActivity {
                 if (contact.isFavorite() == true){
                     fav.setImageResource(R.drawable.favorite);
                     contact.setFavorite(false);
+//                    db.updateContact(contact);
+                    cvm.update(contact);
                 }
                 else {
                     fav.setImageResource(R.drawable.favorite_red);
                     contact.setFavorite(true);
+//                    db.updateContact(contact);
+                    cvm.update(contact);
+
                 }
             }
         });
 
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.edit : Intent inte = new Intent(DetailContact.this,ContactAdd.class);
+                    inte.putExtra("con",contact.getId());
+                    inte.putExtra("edit",1);
+                    startActivity(inte);
+                    break;
+
+                }
+                return false;
+            }
+        });
         final String n1 = contact.getNum1();
         final String n2 = contact.getNum2();
         final String em = contact.getEmail();
@@ -134,14 +179,14 @@ public class DetailContact extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        DatabaseHelper databaseHelper = new DatabaseHelper(DetailContact.this);
-        boolean b = databaseHelper.updateContact(contact);
-        if (b){
-            Toast.makeText(this, "Favorite was set", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(this, "Favorite was not able to set", Toast.LENGTH_SHORT).show();
-        }
+//        DatabaseHelper databaseHelper = new DatabaseHelper(DetailContact.this);
+//        boolean b = databaseHelper.updateContact(contact);
+//        if (b){
+//            Toast.makeText(this, "Favorite was set", Toast.LENGTH_SHORT).show();
+//        }
+//        else {
+//            Toast.makeText(this, "Favorite was not able to set", Toast.LENGTH_SHORT).show();
+//        }
         finish();
     }
 }

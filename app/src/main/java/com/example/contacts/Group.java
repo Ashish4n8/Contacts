@@ -15,10 +15,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Group extends Fragment implements ContactAdapter.ContactClicked {
     private int cat;
@@ -26,11 +30,14 @@ public class Group extends Fragment implements ContactAdapter.ContactClicked {
     DrawerLayout drawer;
     View view;
     RecyclerView recyclerView;
-    RecyclerView.Adapter myAdapter;
+    //RecyclerView.Adapter myAdapter;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList<Contact> contacts;
-    ArrayList<Contact> friends;
-    ArrayList<Contact> family;
+    List<Contact> contacts;
+    List<Contact> friends;
+    List<Contact> family;
+    List<Contact> scons;
+    ContactViewModel cvm;
+    ContactAdapter myAdapter = new ContactAdapter(this);
 
     public Group(int category) {
         this.cat = category;
@@ -77,8 +84,31 @@ public class Group extends Fragment implements ContactAdapter.ContactClicked {
             }
         });
 
-        DatabaseHelper db = new DatabaseHelper(this.getActivity());
-        contacts = db.getContacts();
+        cvm =new ViewModelProvider(this).get(ContactViewModel.class);
+        friends = new ArrayList<Contact>();
+        family = new ArrayList<Contact>();
+        cvm.getall().observe(getViewLifecycleOwner(), new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(List<Contact> list) {
+                contacts = list;
+                for (int i=0;i<contacts.size();i++){
+                    Contact test = contacts.get(i);
+                    if (test.getCategory().equals("Family")){
+                        family.add(test);
+                    }
+                    else {
+                        friends.add(test);
+                    }
+                }
+                if (cat == 0){
+                    scons = family;
+                }
+                else {
+                    scons = friends;
+                }
+                myAdapter.setcons(scons);
+            }
+        });
         return view;
     }
 
@@ -89,25 +119,11 @@ public class Group extends Fragment implements ContactAdapter.ContactClicked {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this.getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        friends = new ArrayList<Contact>();
-        family = new ArrayList<Contact>();
-        for (int i=0;i<contacts.size();i++){
-            Contact test = contacts.get(i);
-            if (test.getCategory().equals("Family")){
-                family.add(test);
 
-            }
-            else {
-                friends.add(test);
-            }
-        }
 
-        if (cat == 0){
-            myAdapter = new ContactAdapter(family,this);
-        }
-        else {
-            myAdapter = new ContactAdapter(friends, this);
-        }
+
+
+        myAdapter = new ContactAdapter(this);
         recyclerView.setAdapter(myAdapter);
     }
 
